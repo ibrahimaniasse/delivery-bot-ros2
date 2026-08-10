@@ -50,7 +50,7 @@ delivery_bot_ws/
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/Ibrahim0899/delivery-bot-ros2.git
+git clone https://github.com/ibrahimaniasse/delivery-bot-ros2.git
 cd delivery-bot-ros2
 ```
 
@@ -105,7 +105,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 👤 Author
 
-**Ibrahim** - [@Ibrahim0899](https://github.com/Ibrahim0899)
+**Ibrahima NIASSE** — [GitHub](https://github.com/ibrahimaniasse)
 
 ---
 
