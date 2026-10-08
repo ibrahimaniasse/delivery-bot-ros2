@@ -4,7 +4,7 @@
   <name>delivery_bot_description</name>
   <version>1.0.0</version>
   <description>URDF/Xacro description package for DeliveryBot autonomous robot</description>
-  <maintainer email="engineer@deliverybot.dev">Isaiah</maintainer>
+  <maintainer email="ibrahimaniasse0899@gmail.com">Ibrahima NIASSE</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
