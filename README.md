@@ -2,6 +2,8 @@
 
 A ROS 2-based autonomous delivery robot implementing **Reinforcement Learning (Q-Learning)** for obstacle avoidance and point-to-point goal navigation with 360° LiDAR perception.
 
+[![ROS 2 CI](https://github.com/ibrahimaniasse/delivery-bot-ros2/actions/workflows/ci.yml/badge.svg)](https://github.com/ibrahimaniasse/delivery-bot-ros2/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/Tests-12%2F12_Passing-SUCCESS?logo=pytest)](https://github.com/ibrahimaniasse/delivery-bot-ros2/actions)
 ![ROS2](https://img.shields.io/badge/ROS_2-Humble-22314E?logo=ros)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)
 ![Gazebo](https://img.shields.io/badge/Gazebo-Fortress-orange)

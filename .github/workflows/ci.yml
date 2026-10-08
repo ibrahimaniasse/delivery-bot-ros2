@@ -1,0 +1,49 @@
+name: ROS 2 CI
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+jobs:
+  unit-tests:
+    name: Q-Learning Algorithm Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest numpy
+
+      - name: Run Pytest
+        run: |
+          PYTHONPATH=delivery_bot_ws/src/delivery_bot_ai pytest delivery_bot_ws/src/delivery_bot_ai/test/ --tb=short -v
+
+  colcon-build:
+    name: Colcon Build (Ubuntu 22.04 / Humble)
+    runs-on: ubuntu-22.04
+    container:
+      image: ros:humble-ros-base
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies and build
+        run: |
+          apt-get update
+          apt-get install -y python3-pip
+          source /opt/ros/humble/setup.bash
+          cd delivery_bot_ws
+          rosdep update
+          rosdep install --from-paths src --ignore-src -y
+          colcon build --symlink-install
