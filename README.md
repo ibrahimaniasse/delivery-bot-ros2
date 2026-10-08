@@ -1,52 +1,78 @@
-# 🤖 Delivery Bot ROS2
+# 🤖 Delivery Bot ROS 2
 
-A ROS2-based autonomous delivery robot with AI-powered navigation using Google Gemini.
+A ROS 2-based autonomous delivery robot implementing **Reinforcement Learning (Q-Learning)** for obstacle avoidance and point-to-point goal navigation with 360° LiDAR perception.
 
-![ROS2](https://img.shields.io/badge/ROS2-Humble-blue)
-![Python](https://img.shields.io/badge/Python-3.10+-green)
+![ROS2](https://img.shields.io/badge/ROS_2-Humble-22314E?logo=ros)
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)
 ![Gazebo](https://img.shields.io/badge/Gazebo-Fortress-orange)
-![AI](https://img.shields.io/badge/AI-Google%20Gemini-purple)
+![Algorithm](https://img.shields.io/badge/RL-Q--Learning-green)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 ## 🎯 Features
 
-- **Autonomous Navigation**: AI-powered obstacle avoidance and path planning
-- **LiDAR Integration**: 360° laser scanning for environment perception
-- **Gazebo Simulation**: Full simulation environment for testing
-- **RViz Visualization**: Real-time robot state visualization
-- **Google Gemini AI**: Intelligent decision-making for navigation
+- **Reinforcement Learning Navigation**: Tabular Q-Learning agent trained for collision-free waypoint navigation.
+- **State Space Discretization**: Real-time 360° LiDAR range discretization (left, front, right sectors).
+- **Reward Shaping**: Goal-reaching incentives, collision penalties, and step cost optimization.
+- **Q-Table Persistence**: Continuous policy training with serialized Q-table saving and loading.
+- **Gazebo Simulation**: Custom delivery environment with obstacles and target drop-off zones.
+- **RViz Visualization**: Real-time laser scan and robot odometry visualization.
 
 ## 📁 Project Structure
 
 ```
 delivery_bot_ws/
 ├── src/
-│   ├── delivery_bot_ai/          # AI navigation package
+│   ├── delivery_bot_ai/          # RL navigation & training package
 │   │   ├── delivery_bot_ai/
-│   │   │   └── obstacle_avoidance_agent.py
+│   │   │   ├── obstacle_avoidance_agent.py  # Q-learning agent node
+│   │   │   ├── training_manager.py          # Episode management & metrics
+│   │   │   └── reset_service.py             # Simulation reset service
+│   │   ├── config/
+│   │   │   └── training_config.yaml         # Hyperparameters (alpha, gamma, epsilon)
 │   │   └── launch/
-│   │       └── ai_nav.launch.py
-│   ├── delivery_bot_description/  # Robot URDF/Xacro
+│   │       ├── ai_nav.launch.py             # Run pre-trained navigation
+│   │       └── training.launch.py           # Launch training pipeline
+│   ├── delivery_bot_description/ # Robot URDF/Xacro models & RViz config
 │   │   ├── urdf/
 │   │   │   └── robot.urdf.xacro
-│   │   ├── config/
-│   │   │   └── display.rviz
 │   │   └── launch/
 │   │       └── display.launch.py
-│   └── delivery_bot_gazebo/       # Gazebo simulation
+│   └── delivery_bot_gazebo/      # Gazebo simulation world & launch
 │       ├── worlds/
 │       │   └── delivery_zone.sdf
 │       └── launch/
 │           └── sim.launch.py
 ```
 
+## 🧠 Navigation Architecture (Q-Learning)
+
+The navigation policy is driven by a model-free Q-Learning agent:
+
+```mermaid
+graph LR
+    Lidar[360° LiDAR Scan] --> Discretize[State Discretizer<br/>Front / Left / Right]
+    Odom[Odometry / Goal Pos] --> State[State Index]
+    State --> Agent[Q-Learning Agent<br/>ε-Greedy Policy]
+    Agent --> Action[Twist Command<br/>cmd_vel]
+    Action --> Sim[Gazebo Environment]
+    Sim --> Reward[Reward Evaluator<br/>Goal: +100 / Crash: -100]
+    Reward --> Agent
+```
+
+### Hyperparameters
+- **Learning Rate ($\alpha$)**: 0.1
+- **Discount Factor ($\gamma$)**: 0.95
+- **Exploration ($\epsilon$)**: 1.0 decaying to 0.05
+- **Convergence**: Persistent Q-table storage in `q_table.pkl`
+
 ## 🛠️ Prerequisites
 
-- Ubuntu 22.04
-- ROS2 Humble
-- Gazebo Fortress
-- Python 3.10+
+- Ubuntu 22.04 LTS
+- ROS 2 Humble Desktop
+- Gazebo Fortress (Ignition Gazebo)
+- Python 3.10+ (`numpy`, `rclpy`)
 
-## 📦 Installation
+## 📦 Installation & Build
 
 1. **Clone the repository**
 ```bash
@@ -54,59 +80,41 @@ git clone https://github.com/ibrahimaniasse/delivery-bot-ros2.git
 cd delivery-bot-ros2
 ```
 
-2. **Install dependencies**
+2. **Install ROS dependencies**
 ```bash
 cd delivery_bot_ws
+rosdep update
 rosdep install --from-paths src --ignore-src -r -y
 ```
 
 3. **Build the workspace**
 ```bash
-colcon build
+colcon build --symlink-install
 source install/setup.bash
-```
-
-4. **Set up Google Gemini API** (for AI features)
-```bash
-export GEMINI_API_KEY="your-api-key-here"
 ```
 
 ## 🚀 Usage
 
-### Launch Simulation
+### 1. Launch Simulation & Robot
 ```bash
 ros2 launch delivery_bot_gazebo sim.launch.py
 ```
 
-### Launch RViz Visualization
+### 2. Launch RViz Visualization
 ```bash
 ros2 launch delivery_bot_description display.launch.py
 ```
 
-### Launch AI Navigation
+### 3. Run Autonomous RL Navigation
 ```bash
 ros2 launch delivery_bot_ai ai_nav.launch.py
 ```
 
-## 🧠 AI Navigation
-
-The robot uses Google Gemini AI for intelligent obstacle avoidance. The AI agent:
-- Analyzes LiDAR scan data
-- Makes navigation decisions based on obstacle positions
-- Outputs velocity commands for smooth navigation
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to open issues or submit pull requests.
+### 4. (Optional) Run Training Mode
+```bash
+ros2 launch delivery_bot_ai training.launch.py
+```
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
-
-## 👤 Author
-
-**Ibrahima NIASSE** — [GitHub](https://github.com/ibrahimaniasse)
-
----
-
-⭐ If you find this project useful, please consider giving it a star!
+This project is licensed under the MIT License.
